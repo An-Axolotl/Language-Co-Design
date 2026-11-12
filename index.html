@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language to Design (L2D): Towards Self Evolving Robots</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Serif:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg:       #0d0d0f;
+            --surface:  #141416;
+            --border:   #242428;
+            --muted:    #55555e;
+            --secondary:#9898a8;
+            --body:     #c8c8d8;
+            --heading:  #f0f0f4;
+            --accent:   #7b9de8;
+            --accent2:  #a8c4ff;
+            --ok:       #6fcf8e;
+            --warn:     #e8c25b;
+            --design:   #f0823a;
+            --design-2: #ffb07a;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Noto Sans', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--body);
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        .page { max-width: 900px; margin: 0 auto; padding: 0 24px; }
+        .page-wide { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+
+        header { padding: 64px 24px 40px; text-align: center; max-width: 900px; margin: 0 auto; }
+
+        .venue-tag {
+            display: inline-block; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em;
+            text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent);
+            border-radius: 3px; padding: 3px 10px; margin-bottom: 20px;
+        }
+
+        h1 {
+            font-family: 'Noto Serif', Georgia, serif; font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 400; color: var(--heading); line-height: 1.25; margin-bottom: 24px; letter-spacing: -0.01em;
+        }
+
+        .authors-inline { font-size: 1rem; color: var(--body); margin-bottom: 28px; font-style: italic; }
+
+        .link-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 8px; }
+        .link-pill {
+            display: inline-flex; align-items: center; gap: 6px; padding: 7px 18px; border-radius: 4px;
+            font-size: 0.875rem; font-weight: 500; text-decoration: none; transition: background 0.2s, transform 0.15s;
+            border: 1px solid var(--border); color: var(--body); background: var(--surface);
+        }
+        .link-pill:hover { background: #1e1e24; border-color: var(--muted); transform: translateY(-1px); }
+        .link-pill.primary { background: #1b2b52; border-color: #2e4a8a; color: var(--accent2); }
+        .link-pill.primary:hover { background: #22366a; }
+
+        .hero-wrap { max-width: 1000px; margin: 40px auto 0; padding: 0 24px; }
+        .hero-wrap img { width: 100%; border-radius: 6px; border: 1px solid var(--border); display: block; }
+        .hero-caption { text-align: center; font-size: 0.85rem; color: var(--secondary); margin-top: 10px; font-style: italic; }
+
+        section { padding: 60px 0; border-top: 1px solid var(--border); }
+
+        h2 {
+            font-family: 'Noto Serif', Georgia, serif; font-size: clamp(1.3rem, 2.5vw, 1.75rem);
+            font-weight: 400; color: var(--heading); margin-bottom: 24px; letter-spacing: -0.01em;
+        }
+        h3.sub {
+            font-family: 'Noto Serif', Georgia, serif; font-size: 1.2rem; font-weight: 400;
+            color: var(--heading); margin: 40px 0 8px;
+        }
+        h3.sub:first-of-type { margin-top: 0; }
+        .sub-note { font-size: 0.9rem; color: var(--secondary); margin-bottom: 20px; }
+
+        .abstract-text { font-family: 'Noto Serif', Georgia, serif; font-size: 1.05rem; line-height: 1.9; color: var(--body); }
+
+        .method-text { font-size: 0.975rem; line-height: 1.8; color: var(--body); margin-bottom: 20px; }
+        .method-text strong { color: var(--heading); font-weight: 600; }
+        .method-list { margin: 0 0 20px 1.2em; font-size: 0.975rem; line-height: 1.8; }
+        .method-list li { margin-bottom: 6px; }
+        .method-list strong { color: var(--heading); font-weight: 600; }
+
+        /* Figures sit on white paper, so give them a light frame */
+        .fig { display: block; width: 100%; border-radius: 6px; border: 1px solid var(--border); background: #fff; margin: 8px 0 8px; }
+        .fig-narrow { max-width: 560px; margin-left: auto; margin-right: auto; }
+        .fig-caption { font-size: 0.85rem; color: var(--secondary); font-style: italic; margin-bottom: 28px; text-align: center; }
+
+        /* Demo grid */
+        .demo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .demo-grid.two { grid-template-columns: repeat(2, 1fr); }
+        .demo-grid.main { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+        .demo-grid.main > .demo-card:last-child:nth-child(odd) { grid-column: 1 / -1; justify-self: center; width: calc(50% - 12px); }
+        .demo-grid.main .demo-card p { font-size: 0.86rem; }
+        @media (max-width: 900px) { .demo-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 620px) { .demo-grid, .demo-grid.two, .demo-grid.main { grid-template-columns: 1fr; } .demo-grid.main > .demo-card:last-child:nth-child(odd) { width: auto; } }
+
+        .demo-card {
+            position: relative; background: linear-gradient(180deg, #19171a 0%, var(--surface) 60%);
+            border: 1px solid #3a2e28; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column;
+            box-shadow: 0 1px 0 rgba(255,255,255,0.03) inset, 0 6px 22px rgba(0,0,0,0.35);
+            transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+        }
+        .demo-card::before {                     /* thin design-orange accent along the top edge */
+            content: ""; position: absolute; left: 0; right: 0; top: 0; height: 3px; z-index: 2;
+            background: linear-gradient(90deg, var(--design) 0%, var(--design-2) 50%, var(--design) 100%);
+        }
+        .demo-card:hover { border-color: #6b4a36; box-shadow: 0 0 0 1px rgba(240,130,58,0.25), 0 10px 30px rgba(0,0,0,0.45); transform: translateY(-2px); }
+        .demo-card .vid-wrap { background: #000; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; }
+        .demo-card video { width: 100%; height: 100%; object-fit: contain; display: block; }
+        .demo-card .card-body { padding: 16px 18px 18px; flex: 1; display: flex; flex-direction: column; }
+        .demo-card h3 { font-family: 'Inter', 'Noto Sans', sans-serif; font-size: 1.12rem; font-weight: 700; letter-spacing: -0.01em;
+                        color: var(--heading); margin-bottom: 4px; line-height: 1.35; }
+        .demo-card .robot { font-family: 'Inter', 'Noto Sans', sans-serif; font-size: 0.72rem; font-weight: 600; color: var(--design-2);
+                            letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+        .demo-card .card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+        .demo-card .card-head h3 { margin-bottom: 0; }
+        .demo-card .card-head .robot { margin-bottom: 0; text-align: right; flex-shrink: 1; }
+        .demo-card .tldr { font-family: 'Inter', 'Noto Sans', sans-serif; font-size: 0.78rem; color: var(--body); margin-bottom: 8px; line-height: 1.5; }
+        .demo-card .tldr b { color: var(--design-2); font-weight: 600; }
+        .demo-card .prompt { font-family: 'Noto Serif', Georgia, serif; font-style: italic; font-size: 0.82rem; color: var(--body); margin-bottom: 8px; }
+        .demo-card p { font-size: 0.8rem; color: var(--secondary); line-height: 1.55; margin-bottom: 16px; }
+        .badge { display: inline-block; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+                 border-radius: 3px; padding: 1px 7px; margin-left: 6px; vertical-align: 2px; }
+        .badge.ok { color: var(--ok); border: 1px solid var(--ok); }
+        .badge.partial { color: var(--warn); border: 1px solid var(--warn); }
+
+        .credit { font-size: 0.74rem; color: var(--secondary); opacity: 0.8; margin: -8px 0 14px; }
+        .credit.footnote { margin: 14px 0 0; }
+        .demo-card h3 .star { color: var(--design-2); font-size: 0.8em; margin-left: 2px; }
+        .credit a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+        .toggle {
+            display: grid; grid-template-columns: 1fr 1fr; margin-top: auto;
+            border: 1px solid #5a463a; border-radius: 3px; overflow: hidden;
+        }
+        .toggle button {
+            font-family: 'Inter', 'Noto Sans', sans-serif; font-size: 0.8rem; font-weight: 600;
+            letter-spacing: 0.08em; text-transform: uppercase;
+            padding: 11px 10px; cursor: pointer; border: none; border-radius: 0;
+            background: transparent; color: #cbbfb6; transition: background 0.15s, color 0.15s;
+        }
+        .toggle button + button { border-left: 1px solid #5a463a; }
+        .toggle button:hover { background: rgba(240,130,58,0.10); color: #fff; }
+        .toggle button.active { background: var(--design); color: #fff; }
+        .toggle button:focus-visible { outline: 2px solid var(--design-2); outline-offset: -2px; }
+
+        .tip {
+            margin-top: 24px; padding: 14px 18px; background: rgba(123,157,232,0.07); border-left: 3px solid var(--accent);
+            border-radius: 3px; font-size: 0.85rem; color: var(--body); line-height: 1.6;
+        }
+
+        footer { padding: 40px 24px; text-align: center; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--muted); }
+        footer a { color: var(--muted); }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Language To Design (L2D): Towards Self Evolving Robots</h1>
+    <div class="authors-inline">Kehlani Fay (Work In Progress, Anticipated Dec 2026)</div>
+    <div class="link-row">
+        <a href="#videos" class="link-pill primary">🎬 Task Videos</a>
+        <a href="#transfer" class="link-pill">🔁 Transfer</a>
+    </div>
+</header>
+
+<div class="hero-wrap">
+    <img src="figures/teaser_v50_big.jpg" alt="Prompt, generation and deployment for four robots: a UR5e throwing a ball, a Go1 jumping a hurdle, a G1 humanoid shooting free throws and a Franka gripper moving a can between bins." loading="eager">
+    <div class="hero-caption">From a sentence and a stock robot to a co-designed body, a motion that performs the task, and manufacturable parts.</div>
+</div>
+
+<!-- Abstract -->
+<section style="margin-top:60px">
+    <div class="page">
+        <h2>Abstract</h2>
+        <div class="abstract-text">
+            <p>Designing a robot requires expertise in both complex mechanics and control, and relies on slow cycles of guessing, prototyping, and testing to find where design and behavior align. This raises a fundamental question: can robot design be made as simple as describing what we want a robot to do? We present Language to Design (L2D), a training-free co-design framework that turns a prompt and a starting robot into an optimized design and controller, along with manufacturable parts. L2D introduces 1) prompt-to-design proposals grounded in measured physics, where language decides what to change and simulation decides how much; 2) a general co-design space across arms, grippers, hands, quadrupeds, and humanoids, spanning kinematics, motors, added joints, and continuous contact shapes; and 3) a training-free path from prompt to fabrication, in which added parts are optimized under simulated loads, 3D printed, and deployed on hardware. We demonstrate L2D on 15 tasks across five robot families, with two tasks on real hardware.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Videos -->
+<section id="videos">
+    <div class="page-wide">
+        <h2>Co-Designed Robots In Action</h2>
+        <p class="method-text">L2D tasks showing found design v. stock robot performance. <span style="color:#e8762b;font-weight:600">Orange</span> marks design changed parts.</p>
+
+        <h3 class="sub">Tasks</h3>
+        <div class="demo-grid main">
+            <div class="demo-card">
+                <div class="vid-wrap"><video data-a="videos/hurdle_run2.mp4?v=20261105h" data-b="videos/hurdle_run2_vs.mp4?v=20261105h" src="videos/hurdle_run2.mp4?v=20261105h" autoplay loop muted playsinline preload="metadata"></video></div>
+                <div class="card-body">
+                    <div class="card-head"><h3>Hurdle</h3><div class="robot">UNITREE GO2 + PRINTED PARTS &middot; QUADRUPED</div></div>
+                    <div class="prompt">Prompt: &ldquo;Hurdle over the wall in front of you: get over it and past it.&rdquo;</div>
+                    <div class="toggle"><button class="active" data-v="a">L2D design</button><button data-v="b">vs. stock</button></div>
+                </div>
+            </div>
+            <div class="demo-card">
+                <div class="vid-wrap"><video data-a="videos/toss_or2.mp4?v=20261030c" data-b="videos/toss_or2_vs.mp4?v=20261030c" src="videos/toss_or2.mp4?v=20261030c" autoplay loop muted playsinline preload="metadata"></video></div>
+                <div class="card-body">
+                    <div class="card-head"><h3>Toss</h3><div class="robot">UR5e + ROBOTIQ 2F-85 &middot; ARM</div></div>
+                    <div class="prompt">Prompt: &ldquo;Throw the ball as far as you can.&rdquo;</div>
+                    <div class="toggle"><button class="active" data-v="a">L2D design</button><button data-v="b">vs. stock</button></div>
+                </div>
+            </div>
+            <div class="demo-card">
+                <div class="vid-wrap"><video data-a="videos/curl_smooth.mp4?v=20261030a" data-b="videos/curl_smooth_vs.mp4?v=20261030a" src="videos/curl_smooth.mp4?v=20261030a" autoplay loop muted playsinline preload="metadata"></video></div>
+                <div class="card-body">
+                    <div class="card-head"><h3>Curling</h3><div class="robot">KINOVA GEN3 + 2F-85 &middot; ARM</div></div>
+                    <div class="prompt">Prompt: &ldquo;Slide the stone down the ice and let go of it before the red line.&rdquo;</div>
+                    <div class="toggle"><button class="active" data-v="a">L2D design</button><button data-v="b">vs. stock</button></div>
+                </div>
+            </div>
+            <div class="demo-card">
+                <div class="vid-wrap"><video data-a="videos/binpick.mp4?v=20261003d" data-b="videos/binpick_vs.mp4?v=20261003d" src="videos/binpick.mp4?v=20261003d" autoplay loop muted playsinline preload="metadata"></video></div>
+                <div class="card-body">
+                    <div class="card-head"><h3>Bin Pick</h3><div class="robot">FRANKA FR3 + GENERATED GRIPPER</div></div>
+                    <div class="prompt">Prompt: &ldquo;Pick the can up out of the bin &hellip; put it down inside the green bin.&rdquo;</div>
+                    <div class="toggle"><button class="active" data-v="a">L2D design</button><button data-v="b">vs. stock</button></div>
+                </div>
+            </div>
+            <div class="demo-card">
+                <div class="vid-wrap"><video data-a="videos/freethrow_or.mp4?v=20261029o" data-b="videos/freethrow_or_vs.mp4?v=20261029o" src="videos/freethrow_or.mp4?v=20261029o" autoplay loop muted playsinline preload="metadata"></video></div>
+                <div class="card-body">
+                    <div class="card-head"><h3>Free Throw</h3><div class="robot">UNITREE G1 + HANDS &middot; HUMANOID</div></div>
+                    <div class="prompt">Prompt: &ldquo;Shoot it into the hoop without stepping over the line.&rdquo;</div>
+                    <div class="toggle"><button class="active" data-v="a">L2D design</button><button data-v="b">vs. stock</button></div>
+                </div>
+            </div>
+            <div class="demo-card">
+                <div class="vid-wrap"><video data-a="videos/pen_or.mp4?v=20261029o" data-b="videos/pen_or_vs.mp4?v=20261029o" src="videos/pen_or.mp4?v=20261029o" autoplay loop muted playsinline preload="metadata"></video></div>
+                <div class="card-body">
+                    <div class="card-head"><h3>Pen Spin</h3><div class="robot">SHARPA HAND &middot; DEXTEROUS HAND</div></div>
+                    <div class="prompt">Prompt: &ldquo;Spin it one full turn without dropping it, ending steady.&rdquo;</div>
+                    <div class="toggle"><button class="active" data-v="a">L2D design</button><button data-v="b">vs. stock</button></div>
+                </div>
+            </div>
+            <div class="demo-card">
+                <div class="vid-wrap"><video data-a="videos/climb_still.mp4?v=20261030a" data-b="videos/climb_attempt_vs.mp4?v=20261030b" src="videos/climb_still.mp4?v=20261030a" autoplay loop muted playsinline preload="metadata"></video></div>
+                <div class="card-body">
+                    <div class="card-head"><h3>Box Climb</h3><div class="robot">UNITREE GO2 + PRINTED PARTS &middot; QUADRUPED</div></div>
+                    <div class="prompt">Prompt: &ldquo;Climb up onto the box in front of you (0.45&thinsp;m high) and stand on it.&rdquo;</div>
+                    <div class="toggle"><button class="active" data-v="a">L2D design</button><button data-v="b">vs. stock</button></div>
+                </div>
+            </div>
+            <div class="demo-card">
+                <div class="vid-wrap"><video data-a="videos/soccer_single.mp4?v=20261029a" data-b="videos/soccer_strong_vs.mp4?v=20261030k" src="videos/soccer_single.mp4?v=20261029a" autoplay loop muted playsinline preload="metadata"></video></div>
+                <div class="card-body">
+                    <div class="card-head"><h3>Soccer</h3><div class="robot">UNITREE ALIENGO &middot; QUADRUPED</div></div>
+                    <div class="prompt">Prompt: &ldquo;Quickly shoot this soccer ball into the top left hand corner of the net &hellip; without crossing over the line.&rdquo;</div>
+                    <div class="toggle"><button class="active" data-v="a">L2D design</button><button data-v="b">vs. stock</button></div>
+                </div>
+            </div>
+            <div class="demo-card">
+                <div class="vid-wrap"><video data-a="videos/longkick2.mp4?v=20261105L" data-b="videos/longkick2_vs.mp4?v=20261105L" src="videos/longkick2.mp4?v=20261105L" autoplay loop muted playsinline preload="metadata"></video></div>
+                <div class="card-body">
+                    <div class="card-head"><h3>Long Kick</h3><div class="robot">UNITREE GO2 + PRINTED FEET &middot; QUADRUPED</div></div>
+                    <div class="prompt">Prompt: &ldquo;Kick the ball as far as possible from a standing kick.&rdquo;</div>
+                    <div class="toggle"><button class="active" data-v="a">L2D design</button><button data-v="b">vs. stock</button></div>
+                </div>
+            </div>
+            <div class="demo-card">
+                <div class="vid-wrap"><video data-a="videos/longjump_a1_light.mp4?v=20261111L" data-b="videos/longjump_a1_light_vs.mp4?v=20261111L" src="videos/longjump_a1_light.mp4?v=20261111L" autoplay loop muted playsinline preload="metadata"></video></div>
+                <div class="card-body">
+                    <div class="card-head"><h3>Standing Long Jump</h3><div class="robot">UNITREE A1 &middot; QUADRUPED</div></div>
+                    <div class="prompt">Prompt: &ldquo;Jump as far forward as you can, landing on your feet.&rdquo;</div>
+                    <div class="toggle"><button class="active" data-v="a">L2D design</button><button data-v="b">vs. stock</button></div>
+                </div>
+            </div>
+        
+            <div class="demo-card">
+                <div class="vid-wrap"><video data-a="videos/hammer_fast.mp4?v=20261030h" data-b="videos/hammer_fast_vs.mp4?v=20261030h" src="videos/hammer_fast.mp4?v=20261030h" autoplay loop muted playsinline preload="metadata"></video></div>
+                <div class="card-body">
+                    <div class="card-head"><h3>Hammer<sup class="star">*</sup></h3><div class="robot">FRANKA PANDA + UMI GRIPPER &middot; GRIPPER ONLY</div></div>
+                    <div class="prompt">Prompt: &ldquo;Use the hammer to drive the nail into the wooden board.&rdquo;</div>
+                    <div class="toggle"><button class="active" data-v="a">L2D design</button><button data-v="b">vs. stock</button></div>
+                </div>
+            </div>
+            <div class="demo-card">
+                <div class="vid-wrap"><video data-a="videos/usb_insert4.mp4?v=20261031u" data-b="videos/usb_insert4_vs.mp4?v=20261031u" src="videos/usb_insert4.mp4?v=20261031u" autoplay loop muted playsinline preload="metadata"></video></div>
+                <div class="card-body">
+                    <div class="card-head"><h3>USB Insertion<sup class="star">*</sup></h3><div class="robot">FRANKA PANDA + ALLEGRO HAND &middot; HAND ONLY</div></div>
+                    <div class="prompt">Prompt: &ldquo;The USB flash drive is in your hand: insert it fully into the laptop&rsquo;s USB port.&rdquo;</div>
+                    <div class="toggle"><button class="active" data-v="a">L2D design</button><button data-v="b">vs. stock</button></div>
+                </div>
+            </div>
+            <div class="demo-card">
+                <div class="vid-wrap"><video data-a="videos/rocky_fast.mp4?v=20261030r" data-b="videos/rocky_fast_vs.mp4?v=20261030r" src="videos/rocky_fast.mp4?v=20261030r" autoplay loop muted playsinline preload="metadata"></video></div>
+                <div class="card-body">
+                    <div class="card-head"><h3>Rocky Slope</h3><div class="robot">ANYMAL C &middot; QUADRUPED</div></div>
+                    <div class="prompt">Prompt: &ldquo;Sprint up the rocky slope to the yellow mark at the top.&rdquo;</div>
+                    <div class="toggle"><button class="active" data-v="a">L2D design</button><button data-v="b">vs. stock</button></div>
+                </div>
+            </div>
+            <div class="demo-card">
+                <div class="vid-wrap"><video data-a="videos/yamscoop.mp4?v=20261030y" data-b="videos/yamscoop_vs.mp4?v=20261030y" src="videos/yamscoop.mp4?v=20261030y" autoplay loop muted playsinline preload="metadata"></video></div>
+                <div class="card-body">
+                    <div class="card-head"><h3>Scoop</h3><div class="robot">YAM ARM &middot; END EFFECTOR ONLY</div></div>
+                    <div class="prompt">Prompt: &ldquo;Scoop the balls out of the blue bin and tip them into the green bin, as many as you can as fast as you can.&rdquo;</div>
+                    <div class="toggle"><button class="active" data-v="a">L2D design</button><button data-v="b">vs. stock</button></div>
+                </div>
+            </div>
+            <div class="demo-card">
+                <div class="vid-wrap"><video data-a="videos/h1run.mp4?v=20261107a" data-b="videos/h1run_vs.mp4?v=20261107a" src="videos/h1run.mp4?v=20261107a" autoplay loop muted playsinline preload="metadata"></video></div>
+                <div class="card-body">
+                    <div class="card-head"><h3>Run Fast</h3><div class="robot">UNITREE H1 &middot; HUMANOID</div></div>
+                    <div class="prompt">Prompt: &ldquo;Run straight forward as fast as you can and stay on your feet.&rdquo;</div>
+                    <div class="toggle"><button class="active" data-v="a">L2D design</button><button data-v="b">vs. stock</button></div>
+                </div>
+            </div>
+            <div class="demo-card">
+                <div class="vid-wrap"><video data-a="videos/drone.mp4?v=20261107a" data-b="videos/drone_vs.mp4?v=20261107a" src="videos/drone.mp4?v=20261107a" autoplay loop muted playsinline preload="metadata"></video></div>
+                <div class="card-body">
+                    <div class="card-head"><h3>Drone Race</h3><div class="robot">SKYDIO X2 &middot; DRONE</div></div>
+                    <div class="prompt">Prompt: &ldquo;Fly one lap of the eight-gate race track from a standing start as fast as you can: through every gate in order and back through the first, touching nothing.&rdquo;</div>
+                    <div class="toggle"><button class="active" data-v="a">L2D design</button><button data-v="b">vs. stock</button></div>
+                </div>
+            </div>
+            <div class="demo-card">
+                <div class="vid-wrap"><video data-a="videos/handover.mp4?v=20261107a" data-b="videos/handover_vs.mp4?v=20261107a" src="videos/handover.mp4?v=20261107a" autoplay loop muted playsinline preload="metadata"></video></div>
+                <div class="card-body">
+                    <div class="card-head"><h3>Handover<sup class="star">&dagger;</sup></h3><div class="robot">TWO ALOHA ARMS &middot; BIMANUAL ARM</div></div>
+                    <div class="prompt">Prompt: &ldquo;Hand the cube from one arm to the other as quickly as possible, and hold it steady at the goal.&rdquo;</div>
+                    <div class="toggle"><button class="active" data-v="a">L2D design</button><button data-v="b">vs. stock</button></div>
+                </div>
+            </div>
+        </div>
+        <p class="credit footnote"><sup>*</sup> Robot and arena from <a href="https://dexjoco.github.io/" target="_blank" rel="noopener">DexJoCo</a> (MIT). Hammer: DexJoCo&rsquo;s hammer&ndash;nail task with a contact-culling fix and a jaw force cap. USB insertion: follows DexJoCo2&rsquo;s description, built here in MuJoCo. <sup>&dagger;</sup> Task and ALOHA scene from <a href="https://github.com/google-deepmind/mujoco_mpc" target="_blank" rel="noopener">MuJoCo MPC</a> (Apache 2.0); both arms share one design.</p>
+
+        <h3 class="sub">Hurdle Under Real Motor Limits</h3>
+        <p class="sub-note">Go2 on a 0.35&thinsp;m tall hurdle with its real motor gains and limits (k<sub>p</sub>&nbsp;25, k<sub>d</sub>&nbsp;0.5, 45&thinsp;N&thinsp;m torque limit on every joint); left, the stock Go2; right, L2D's printed clamp feet (half speed).</p>
+        <div class="demo-grid">
+            <div class="demo-card" style="grid-column: 1 / -1;">
+                <div class="vid-wrap"><video src="videos/hurdle_feet35_sbs.mp4?v=20261102c" autoplay loop muted playsinline preload="metadata"></video></div>
+                <div class="card-body">
+                    <div class="card-head"><h3>Hurdle: Stock Go2 Vs. Printed Clamp Feet</h3><div class="robot">UNITREE GO2 &middot; REAL MOTOR LIMITS &middot; SIDE BY SIDE</div></div>
+                    <div class="prompt">Prompt: &ldquo;Hurdle over the 0.35&thinsp;m wall in front of you: get over it and past it, using additive parts only.&rdquo;</div>
+                    <div class="prompt" style="font-style: normal;">Fabrication: the printed feet were lightened with FEA (stress-based topology optimization), the fabrication step of the L2D pipeline.</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+
+<!-- Transfer -->
+<section id="transfer">
+    <div class="page-wide">
+        <h2>Transfer Between Tasks</h2>
+        <p class="method-text" style="max-width:900px">Designs found on one task seed the initial search for a related task.</p>
+        <div class="demo-grid two">
+            <div class="demo-card">
+                <div class="vid-wrap"><video data-a="videos/longjump_lib_long.mp4?v=20261029L" data-b="videos/longjump_lib_long_vs.mp4?v=20261029L" src="videos/longjump_lib_long.mp4?v=20261029L" autoplay loop muted playsinline preload="metadata"></video></div>
+                <div class="card-body">
+                    <div class="card-head"><h3>Pit Leap &rarr; Long Jump</h3><div class="robot">UNITREE GO2 &middot; QUADRUPED</div></div>
+                    <div class="toggle"><button class="active" data-v="a">L2D design</button><button data-v="b">vs. stock</button></div>
+                </div>
+            </div>
+            <div class="demo-card">
+                <div class="vid-wrap"><video data-a="videos/gap_feet.mp4?v=20261030g" data-b="videos/gap_feet_vs.mp4?v=20261030g" src="videos/gap_feet.mp4?v=20261030g" autoplay loop muted playsinline preload="metadata"></video></div>
+                <div class="card-body">
+                    <div class="card-head"><h3>Long Jump &rarr; Pit Leap</h3><div class="robot">UNITREE GO2 &middot; QUADRUPED</div></div>
+                    <div class="toggle"><button class="active" data-v="a">L2D design</button><button data-v="b">vs. stock</button></div>
+                </div>
+            </div>
+            <div class="demo-card">
+                <div class="vid-wrap"><video data-a="videos/curl_xfer_smooth.mp4?v=20261105c" data-b="videos/curl_xfer_smooth_vs2.mp4?v=20261106s" src="videos/curl_xfer_smooth.mp4?v=20261105c" autoplay loop muted playsinline preload="metadata"></video></div>
+                <div class="card-body">
+                    <div class="card-head"><h3>Toss &rarr; Curling</h3><div class="robot">UR5e + ROBOTIQ 2F-85 &middot; ARM</div></div>
+                    <div class="toggle"><button class="active" data-v="a">L2D design</button><button data-v="b">vs. stock</button></div>
+                </div>
+            </div>
+            <div class="demo-card">
+                <div class="vid-wrap"><video data-a="videos/scoop_warm.mp4?v=20261105w" data-b="videos/scoop_warm_vs2.mp4?v=20261106s" src="videos/scoop_warm.mp4?v=20261105w" autoplay loop muted playsinline preload="metadata"></video></div>
+                <div class="card-body">
+                    <div class="card-head"><h3>Bin Pick &rarr; Scoop</h3><div class="robot">FR3 &rarr; YAM + BIN-PICK GRIPPER &middot; ARM</div></div>
+                    <div class="toggle"><button class="active" data-v="a">L2D design</button><button data-v="b">vs. stock</button></div>
+                </div>
+            </div>
+        </div>
+        
+        </div>
+    </div>
+</section>
+
+
+<script>
+document.querySelectorAll('.demo-card').forEach(function (card) {
+    var v = card.querySelector('video');
+    card.querySelectorAll('.toggle button').forEach(function (b) {
+        b.addEventListener('click', function () {
+            card.querySelectorAll('.toggle button').forEach(function (x) { x.classList.remove('active'); });
+            b.classList.add('active');
+            v.src = v.dataset[b.dataset.v];
+            v.play();
+        });
+    });
+});
+// Only play clips that are on screen
+if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) { if (e.isIntersecting) { e.target.play().catch(function(){}); } else { e.target.pause(); } });
+    }, { threshold: 0.2 });
+    document.querySelectorAll('video').forEach(function (v) { io.observe(v); });
+}
+</script>
+</body>
+</html>
